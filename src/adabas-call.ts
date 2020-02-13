@@ -19,16 +19,16 @@
 
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { PayloadData } from './interfaces';
-import { AdabasTcp } from './adabas-tcp';
+import { AdabasLnk } from './adabas-lnk';
 import { expandBuffer, hexdump } from './common';
 import { AdabasBuffer } from './adabas-buffer';
 import { Abd } from './abd';
 
 export class AdabasCall {
-    private client: AdabasTcp;
+    private client: AdabasLnk;
     private log: string[];
 
-    constructor(client: AdabasTcp, log: string[] = []) {
+    constructor(client: AdabasLnk, log: string[] = []) {
         this.client = client;
         this.log = log;
     }

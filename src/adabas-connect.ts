@@ -19,13 +19,13 @@
 
 
 
-import { AdabasTcp } from './adabas-tcp';
+import { AdabasLnk } from './adabas-lnk';
 
 export class AdabasConnect {
 
-    private adabas: AdabasTcp;
+    private adabas: AdabasLnk;
 
-    constructor(client: AdabasTcp) {
+    constructor(client: AdabasLnk) {
         this.adabas = client;
     }
 

@@ -25,7 +25,7 @@ import { QueueElement } from './interfaces';
 const HOST = 'localhost';
 const PORT = 49152;
 
-export class AdabasTcp {
+export class AdabasLnk {
     private socket: Socket;
     private queue: QueueElement[] = [];
  
@@ -73,7 +73,7 @@ export class AdabasTcp {
         });
     }
 
-    close() {
+    close(): void {
         // console.log('destroy socket')
         this.socket.destroy();
     }

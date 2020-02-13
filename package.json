@@ -1,7 +1,7 @@
 {
-  "name": "adabas-tcp",
-  "version": "1.0.1",
-  "description": "High level Adabas access package using a TCP connection",
+  "name": "adabas-lnk",
+  "version": "1.0.0",
+  "description": "High level Adabas access package using an ADALNK connection",
   "keywords": [
     "adabas",
     "database",
@@ -19,9 +19,9 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SoftwareAG/adabas-tcp.git"
+    "url": "https://github.com/mgerth/adabas-lnk.git"
   },
-  "bugs": "https://github.com/SoftwareAG/adabas-tcp/issues",
+  "bugs": "https://github.com/mgerth/adabas-lnk/issues",
   "files": [
     "dist/**/*"
   ],

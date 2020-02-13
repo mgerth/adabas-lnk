@@ -1,6 +1,6 @@
-# Adabas TCP
+# Adabas LNK
 
-Access to an Adabas Database from Node.js using the Adabas TCP connection
+Access to an Adabas Database from Node.js using the Adabas ADALNK connection
 
 It offers the classical *CRUD* access methods for Adabas
 
@@ -12,7 +12,7 @@ It offers the classical *CRUD* access methods for Adabas
 ## Installation
 
 ```shell
-npm install adabas-tcp
+npm install adabas-lnk
 ```
 
 ## Introduction
@@ -20,7 +20,7 @@ npm install adabas-tcp
 This simple example shows how to read all records of file 11 and writes the result to the console:
 
 ```typescript
-const Adabas = require('adabas-tcp').Adabas;
+const Adabas = require('adabas-lnk').Adabas;
 
 const adabas = new Adabas('localhost', 60001);
 adabas.read({ fnr: 11 }).then( result => {
@@ -31,7 +31,7 @@ adabas.read({ fnr: 11 }).then( result => {
 
 What it does is to read the File Description Table of the file and adds all available fields to the format buffer. The result is an array of Javascript objects:
 
-```
+``` javascript
 [
   { ISN: 1,
     AA: '50005800',
@@ -167,14 +167,14 @@ group(Income, 'AQ', { name: 'Income', occ: 6 }) // periodic group
 ##### Typescript
 
 ``` javascript
-import { Adabas, AdabasMap } from 'adabas-tcp';
+import { Adabas, AdabasMap } from 'adabas-lnk';
 ```
 
 ##### Javascript
 
 ``` javascript
-const Adabas = require('adabas-tcp').Adabas;
-const AdabasMap = require('adabas-tcp').AdabasMap;
+const Adabas = require('adabas-lnk').Adabas;
+const AdabasMap = require('adabas-lnk').AdabasMap;
 ```
 
 #### Fields Example

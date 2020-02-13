@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright © 2019-2020 Software AG, Darmstadt, Germany and/or its licensors
  *
@@ -20,7 +21,7 @@
 import { ControlBlock } from './control-block';
 import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue } from './interfaces';
 import { AdabasConnect } from './adabas-connect';
-import { AdabasTcp } from './adabas-tcp';
+import { AdabasLnk } from './adabas-lnk';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { AdabasMap } from './adabas-map';
@@ -34,7 +35,7 @@ export class Adabas {
     private host: string;
     private port: number;
     private uuid: Buffer;
-    private client: AdabasTcp;
+    private client: AdabasLnk;
     private adabas: AdabasCall;
     private multifetch = 10;
     private connected: boolean;
@@ -59,14 +60,14 @@ export class Adabas {
         this.connected = false;
 
         this.cb = new ControlBlock();
-        this.client = new AdabasTcp(host, port);
+        this.client = new AdabasLnk(host, port);
 
         this.adabas = new AdabasCall(this.client, this.log);
 
         this.message = new AdabasMessage();
     }
 
-    private setOptions(options: AdabasOptions) {
+    private setOptions(options: AdabasOptions): void {
         this.multifetch = options.multifetch || 10;
         this.log = options.log || null;
     }
@@ -78,7 +79,7 @@ export class Adabas {
         return this.uuid;
     }
 
-    public readFDT(callData: CallData = {}): Promise<any> {
+    public readFDT(callData: CallData = {}): Promise<object> {
         return new Promise(async (resolve, reject) => {
             if (!callData.fnr) reject('File number is not provided');
 
@@ -172,7 +173,7 @@ export class Adabas {
         });
     }
 
-    private async exeUpdate(callData: CallData = {}, resolve: Function, reject: Function) {
+    private async exeUpdate(callData: CallData = {}, resolve: Function, reject: Function): Promise<any> {
         let message = '';
         if (!callData.criteria && !callData.isn) message = 'no criteria or ISN provided.';
         if (!callData.object) message = 'no object provided.';
@@ -207,7 +208,7 @@ export class Adabas {
         });
     }
 
-    private async exeDelete(callData: CallData = {}, resolve: Function, reject: Function) {
+    private async exeDelete(callData: CallData = {}, resolve: Function, reject: Function): Promise<any> {
         if (!callData.criteria) {
             reject('no criteria defined.');
         }
@@ -237,7 +238,7 @@ export class Adabas {
         });
     }
 
-    private async exeClose(resolve: Function, reject: Function) {
+    private async exeClose(resolve: Function, reject: Function): Promise<any> {
         this.executing = true;
         this.cb.init({
             cmd: 'CL'
@@ -264,7 +265,7 @@ export class Adabas {
         });
     }
 
-    private async exeEndTransaction(resolve: Function, reject: Function) {
+    private async exeEndTransaction(resolve: Function, reject: Function): Promise<any> {
         this.executing = true;
         this.cb.init({
             cmd: 'ET'
@@ -290,7 +291,7 @@ export class Adabas {
         });
     }
 
-    private async exeBackoutTransaction(resolve: Function, reject: Function) {
+    private async exeBackoutTransaction(resolve: Function, reject: Function): Promise<any> {
         this.executing = true;
         this.cb.init({
             cmd: 'BT'
@@ -310,7 +311,7 @@ export class Adabas {
         this.connected = false;
     }
 
-    private open(fnr: number, mode = 'UPD') {
+    private open(fnr: number, mode = 'UPD'): Promise<any> {
         return new Promise(async (resolve, reject) => {
             if (this.status === Status.Open) {
                 resolve();
@@ -334,7 +335,7 @@ export class Adabas {
         });
     }
 
-    private async nextCommand() {
+    private async nextCommand(): Promise<any> {
         if (this.queue.length > 0) {
             const element = this.queue.shift();
             switch (element.type) {
@@ -373,7 +374,7 @@ export class Adabas {
         return result;
     }
 
-    private async getAll(callData: CallData = {}) {
+    private async getAll(callData: CallData = {}): Promise<any> {
         if (this.pageDone) return [];
         if (callData.page && callData.page === 0) {
             this.lastISN = 0;
@@ -500,7 +501,7 @@ export class Adabas {
         }
     }
 
-    private async get(isn: number) {
+    private async get(isn: number): Promise<any> {
         if (this.type === CallType.Read) {
             this.cb.init({
                 fnr: this.map.fnr,
@@ -538,7 +539,7 @@ export class Adabas {
         throw new Error('Call type not supported');
     }
 
-    private async modify(obj: any, isn?: number) {
+    private async modify(obj: any, isn?: number): Promise<any> {
         this.map.validate(obj);
         this.open(this.map.fnr);
         // create new map containing only fields from the request
@@ -708,7 +709,7 @@ export class Adabas {
     }
 
 
-    private getMessage(cbx: any) {
+    private getMessage(cbx: any): string {
         return this.message.getMessage(cbx).message + ' ' + this.message.getMessage(cbx).explanation;
     }
 

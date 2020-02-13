@@ -19,7 +19,7 @@
 
 import { AdabasMap } from './adabas-map';
 import { AdabasConnect } from './adabas-connect';
-import { AdabasTcp } from './adabas-tcp';
+import { AdabasLnk } from './adabas-lnk';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { ControlBlock } from './control-block';
@@ -28,10 +28,10 @@ export class FileDescriptionTable {
 
     private encoding: string | undefined;
 
-    private client: AdabasTcp;
+    private client: AdabasLnk;
 
     constructor(host: string, port: number) {
-        this.client = new AdabasTcp(host, port);
+        this.client = new AdabasLnk(host, port);
     }
 
     getFDT(fnr: number): Promise<object> {
