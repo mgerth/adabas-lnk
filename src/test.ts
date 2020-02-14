@@ -1,7 +1,10 @@
 import { Adabas } from './adabas';
+import { AdabasMap } from '.';
 
-const adabas = new Adabas('host', 12);
+const adabas = new Adabas(12);
 
-adabas.read({ fnr: 11, fields: ['AA'] }).then( result => {
+const map = new AdabasMap(11).alpha(8, 'AA');
+
+adabas.read({ map }).then( result => {
     console.log(result);
 })

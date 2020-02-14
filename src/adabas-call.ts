@@ -23,6 +23,7 @@ import * as ref from 'ref';
 import * as ArrayType from 'ref-array';
 
 import { PayloadData } from './interfaces';
+import { hexdump } from './common';
 export class AdabasCall {
 
     adalnkx: any;
@@ -34,8 +35,8 @@ export class AdabasCall {
         console.log(log);
         // this.log = log;
         const libName = (os.platform() == 'win32') ? 'adalnkx' : 'libadalnkx.so';
-    
-        const abd = ref.types.void; 
+
+        const abd = ref.types.void;
         const abdPtr = ref.refType(abd);
         const abdArray = ArrayType(abdPtr);
 
@@ -49,16 +50,22 @@ export class AdabasCall {
     call(payload: PayloadData): Promise<PayloadData> {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log('cb: ', payload.cb.toString('before'));
+                console.log('cmd', payload.cb.cmd);
+                console.log('before', hexdump(payload.cb.acbx));
+                console.log('len', payload.abda.len());
                 payload.abda.dump();
-                console.log('adba:', payload.abda.get());
-                const abd: Buffer[] = [];
-                payload.abda.get().forEach( buf => {
-                    abd.push(buf.buffer);
-                })
-                this.adalnkx.adabasx(payload.cb.acbx, payload.abda.len(), abd);
-                console.log('cb: ', payload.cb.toString('after'));
-                payload.abda.dump();
+                let abda = payload.abda.getAbdArray();
+                // payload.abda.getAbdArray().forEach( (abd, index) => console.log('abd', hexdump(abd, '' + index)));
+                this.adalnkx.adabasx(payload.cb.acbx, payload.abda.len(), abda);
+                console.log('rsp', payload.cb.rsp);
+                if (payload.cb.rsp > 0) {
+                    console.log('error', hexdump(payload.cb.acbx));
+                }
+                // else {
+                //     for (const a in payload.abda.getBufferArray()) {
+                //         console.log(hexdump(a));
+                //     }
+                // }
                 resolve(payload);
             } catch (error) {
                 reject(error);

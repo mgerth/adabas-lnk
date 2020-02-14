@@ -26,11 +26,12 @@ import { ControlBlock } from './control-block';
 export class FileDescriptionTable {
 
     private encoding: string | undefined;
+    private dbid: number;
 
     // private client: AdabasLnk;
 
-    constructor(host: string, port: number) {
-        console.log(host, port);
+    constructor(dbid: number) {
+        this.dbid = dbid;
         // this.client = new AdabasLnk();
     }
 
@@ -39,7 +40,7 @@ export class FileDescriptionTable {
             try {
                 // const uuid = await new AdabasConnect(this.client).connect();
                 const len = 0x10000;
-                const cb = new ControlBlock();
+                const cb = new ControlBlock(this.dbid);
                 cb.init({
                     fnr,
                     typ: 0x30,

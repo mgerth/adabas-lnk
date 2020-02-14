@@ -28,8 +28,9 @@ export class ControlBlock {
     private encoding: string | undefined;
     private buffer: Buffer;
 
-    constructor() {
+    constructor(dbid: number) {
         this.buffer = Buffer.alloc(ControlBlock.LEN);
+        this.dbid = dbid;
         this.init();
     }
 
@@ -206,6 +207,10 @@ export class ControlBlock {
         return this.buffer.toString(this.encoding, 112, 114);
     }
 
+    // get errc(): number {
+    //     return this.buffer.readUInt32LE(114);
+
+    // }
     get errc(): string {
         return this.buffer.toString(this.encoding, 114, 116);
     }
@@ -266,7 +271,7 @@ export class ControlBlock {
                                                     // acbxrsv2      2 byte     +08     must be 0x00
         this.rsp = 0;                               // acbxrsp       2 byte     +0A
         this.cid = '    ';                          // acbxcid       4 byte     +0C
-        this.dbid = 0;                              // acbxdbid      4 byte     +10
+        this.dbid = this.dbid;                      // acbxdbid      4 byte     +10
         this.fnr = 0;                               // acbxfnr       4 byte     +14
         this.isn = 0;                               // acbxisn       8 byte     +18
         this.isl = 0;                               // acbxisl       8 byte     +20
