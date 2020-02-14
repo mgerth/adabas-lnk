@@ -20,8 +20,6 @@
 
 import { ControlBlock } from './control-block';
 import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue } from './interfaces';
-import { AdabasConnect } from './adabas-connect';
-import { AdabasLnk } from './adabas-lnk';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { AdabasMap } from './adabas-map';
@@ -35,7 +33,6 @@ export class Adabas {
     private host: string;
     private port: number;
     private uuid: Buffer;
-    private client: AdabasLnk;
     private adabas: AdabasCall;
     private multifetch = 10;
     private connected: boolean;
@@ -60,9 +57,9 @@ export class Adabas {
         this.connected = false;
 
         this.cb = new ControlBlock();
-        this.client = new AdabasLnk(host, port);
+        // this.client = new AdabasLnk();
 
-        this.adabas = new AdabasCall(this.client, this.log);
+        this.adabas = new AdabasCall(this.log);
 
         this.message = new AdabasMessage();
     }
@@ -74,7 +71,6 @@ export class Adabas {
 
 
     async connect(): Promise<Buffer> {
-        this.uuid = await new AdabasConnect(this.client).connect();
         this.connected = true;
         return this.uuid;
     }
@@ -307,7 +303,6 @@ export class Adabas {
     }
 
     public disconnect(): void {
-        this.client.close();
         this.connected = false;
     }
 
@@ -369,7 +364,7 @@ export class Adabas {
 
     private async callAdabas(abda: AdabasBufferStructure = null, cb: ControlBlock = this.cb): Promise<PayloadData> {
         if (!this.connected) await this.connect();
-        const result = await this.adabas.call({ cb, 'abda': abda, 'uuid': this.uuid });
+        const result = await this.adabas.call({ cb, 'abda': abda });
         this.cb = result.cb;
         return result;
     }

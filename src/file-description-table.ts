@@ -18,8 +18,7 @@
  */
 
 import { AdabasMap } from './adabas-map';
-import { AdabasConnect } from './adabas-connect';
-import { AdabasLnk } from './adabas-lnk';
+// import { AdabasConnect } from './adabas-connect';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { ControlBlock } from './control-block';
@@ -28,16 +27,17 @@ export class FileDescriptionTable {
 
     private encoding: string | undefined;
 
-    private client: AdabasLnk;
+    // private client: AdabasLnk;
 
     constructor(host: string, port: number) {
-        this.client = new AdabasLnk(host, port);
+        console.log(host, port);
+        // this.client = new AdabasLnk();
     }
 
     getFDT(fnr: number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
-                const uuid = await new AdabasConnect(this.client).connect();
+                // const uuid = await new AdabasConnect(this.client).connect();
                 const len = 0x10000;
                 const cb = new ControlBlock();
                 cb.init({
@@ -49,7 +49,7 @@ export class FileDescriptionTable {
                 });
                 const abda = new AdabasBufferStructure();
                 abda.newRb(Buffer.alloc(len));
-                const result = await new AdabasCall(this.client).call({ cb, abda, uuid });
+                const result = await new AdabasCall().call({ cb, abda });
                 const rb = result.abda.getBuffer('R');
                 const numberOfFields = rb.readUInt16LE(2);
                 const fdt = [];
@@ -109,8 +109,8 @@ export class FileDescriptionTable {
                 cb.init({
                     cmd: 'CL'
                 });
-                await new AdabasCall(this.client).call({ cb, abda: new AdabasBufferStructure(), uuid });
-                this.client.close();
+                await new AdabasCall().call({ cb, abda: new AdabasBufferStructure()});
+                // this.client.close();
                 resolve(fdt);
             } catch (error) {
                 reject(error);

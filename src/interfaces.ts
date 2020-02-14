@@ -43,7 +43,6 @@ export interface AdabasOptions {
 export interface PayloadData {
     cb: ControlBlock;
     abda: AdabasBufferStructure;
-    uuid?: Buffer;
 }
 
 export interface MapData {

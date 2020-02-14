@@ -318,7 +318,7 @@ export class ControlBlock {
         this.buffer = buffer;
     }
 
-    toString(text: string): string {
+    toString(text: string = ''): string {
         const data = text + ' Control Block: [' +
               'len: ' + this.len +
             ', cmd: ' + this.cmd +

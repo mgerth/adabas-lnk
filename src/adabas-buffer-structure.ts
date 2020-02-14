@@ -18,6 +18,7 @@
  */
 
 import { AdabasBuffer } from './adabas-buffer';
+import { hexdump } from './common';
 
 export class AdabasBufferStructure {
     private data: AdabasBuffer[];
@@ -58,6 +59,10 @@ export class AdabasBufferStructure {
         return this.data;
     }
 
+    len(): number {
+        return this.data.length;
+    }
+
     getBuffer(type: string): Buffer | null {
         for (let i = 0; i < this.data.length; i++) {
             if (this.data[i].abd.id == type) {
@@ -69,7 +74,7 @@ export class AdabasBufferStructure {
 
     dump() {
         this.data.forEach( (e) => {
-            console.log(e.abd.id, e.buffer.length);
+            console.log(e.abd.id, hexdump(e.buffer));
         })
     }
 }
