@@ -515,7 +515,7 @@ export class Adabas {
         throw new Error('Call type not supported');
     }
 
-    private async modify(obj: any, isn?: number): Promise<any> {
+    private async modify(obj: any, isn?: number|string): Promise<any> {
         this.map.validate(obj);
         this.open(this.map.fnr);
         // create new map containing only fields from the request
@@ -571,7 +571,7 @@ export class Adabas {
             const fb = Buffer.from(updateMap.getFb(false));
             if (isn && isn > 0) {
                 this.cb.cmd = 'N2';
-                this.cb.isn = isn;
+                this.cb.isn = isn as number;
             } else {
                 this.cb.cmd = 'N1';
             }

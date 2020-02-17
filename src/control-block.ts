@@ -258,11 +258,11 @@ export class ControlBlock {
         this.buffer.write(value, 152, 16);
     }
 
-    get acbx() {
+    get acbx(): Buffer  {
         return this.buffer;
     }
 
-    init(value = {}) {
+    init(value = {}): void {
         this.buffer.writeInt8(0x00, 0);             // acbxtyp       1 byte     +00
         this.buffer.writeInt8(0x00, 1);             // acbxrsv1      1 byte     +01
         this.buffer.write('F2', 2, 2);              // acbxver       1 byte     +02
@@ -311,7 +311,7 @@ export class ControlBlock {
         }
     }
 
-    getFields(): any {
+    getFields(): ControlBlock {
         return this;
     }
 
@@ -319,11 +319,11 @@ export class ControlBlock {
         return this.buffer;
     }
 
-    setBuffer(buffer: Buffer) {
+    setBuffer(buffer: Buffer): void {
         this.buffer = buffer;
     }
 
-    toString(text: string = ''): string {
+    toString(text = ''): string {
         const data = text + ' Control Block: [' +
               'len: ' + this.len +
             ', cmd: ' + this.cmd +
@@ -366,8 +366,10 @@ export class ControlBlock {
         return data;
     }
 
-    setValue(value: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue(value: any): void {
         Object.keys(value).forEach((key) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this as any)[key] = value[key];
         });
     }

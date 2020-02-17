@@ -18,7 +18,9 @@
  */
 
 import { ControlBlock } from './control-block';
+import { Message } from './interfaces';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const messages: any = {
     3: {
         text: 'An end-of-file or end-of-list condition was detected.'
@@ -101,7 +103,7 @@ const messages: any = {
 }
 
 export class AdabasMessage {
-    getMessage(cb: ControlBlock): any {
+    getMessage(cb: ControlBlock): Message {
         const message = 'Adabas response code ' + cb.rsp + ' received.';
         let explanation = 'not available';
         if (messages[cb.rsp]) {

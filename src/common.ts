@@ -17,7 +17,7 @@
  *
  */
 
-import { MultifetchElement } from './interfaces';
+import { MultifetchElement, Multifetch } from './interfaces';
 
 export function expandBuffer(buffer: Buffer, len: number): Buffer {
     const missing = len - buffer.length;
@@ -25,7 +25,7 @@ export function expandBuffer(buffer: Buffer, len: number): Buffer {
     return buffer;
 }
 
-function formatOffset(offset: number) {
+function formatOffset(offset: number): string {
   let o = offset.toString(16);
   for (let index = o.length; index < 4; index++) {
       o = '0' + o;
@@ -33,7 +33,7 @@ function formatOffset(offset: number) {
   return o;
 }
 
-function fillToLength(text: string, len: number, filler = ' ') {
+function fillToLength(text: string, len: number, filler = ' '): string {
   if (text.length < len) {
       for (let index = text.length; index < len; index++) {
           text += filler;
@@ -43,6 +43,7 @@ function fillToLength(text: string, len: number, filler = ' ') {
 }
 
 export function hexdump(buffer: Buffer, text = 'Buffer'): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let lines = text + ', length: ' + buffer.length + ', @' + (buffer as any).address() + '\n';
     let pos = 0;
     let lastLine = '';
@@ -70,7 +71,7 @@ export function hexdump(buffer: Buffer, text = 'Buffer'): string {
     return lines;
 }
 
-export function getFields(buffer: Buffer) {
+export function getFields(buffer: Buffer): Multifetch {
     const num = buffer.readUInt32LE(0);
     const mbe: MultifetchElement[] = [];
 

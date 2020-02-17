@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright © 2019-2020 Software AG, Darmstadt, Germany and/or its licensors
  *
@@ -42,6 +43,7 @@ export class AdabasMap {
 
     private _fnr: number;
     private _list: MapData[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private schema: any;
 
     constructor(fnr = 0) {

@@ -26,6 +26,7 @@ import { PayloadData } from './interfaces';
 import { hexdump } from './common';
 export class AdabasCall {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     adalnkx: any;
     private log: string[];
 

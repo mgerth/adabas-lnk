@@ -22,6 +22,7 @@ import { AdabasMap } from './adabas-map';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { ControlBlock } from './control-block';
+import { FdtField } from './interfaces';
 
 export class FileDescriptionTable {
 
@@ -63,11 +64,9 @@ export class FileDescriptionTable {
                     const format = rb.toString(this.encoding, offset + 6, offset + 7);
                     const option2 = rb.readUInt8(offset + 7);
                     if (indicator === 'F') {
-                        const field: any = {};
+                        const field: FdtField = { level, name };
                         let pe = false;
                         let gr = false;
-                        field.level = level;
-                        field.name = name;
                         const o = [];
                         if (option & 8 && field.level == 1) {
                             pe = true;
@@ -131,7 +130,9 @@ export class FileDescriptionTable {
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private objectToMap(object: any): AdabasMap {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const FIELD_FORMAT_TABLE: any = {
             'A': 'alpha',
             'B': 'binary',
@@ -144,6 +145,7 @@ export class FileDescriptionTable {
             'I': 'fixed'
         };
         const map = new AdabasMap();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let m: any = map;
         for (let index = 0; index < object.length; index++) {
             const element = object[index];
