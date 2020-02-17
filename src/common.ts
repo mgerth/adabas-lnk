@@ -43,7 +43,7 @@ function fillToLength(text: string, len: number, filler = ' ') {
 }
 
 export function hexdump(buffer: Buffer, text = 'Buffer'): string {
-    let lines = text + ', length: ' + buffer.length + '\n';
+    let lines = text + ', length: ' + buffer.length + ', @' + (buffer as any).address() + '\n';
     let pos = 0;
     let lastLine = '';
     let identical = 0;

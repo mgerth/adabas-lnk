@@ -25,9 +25,7 @@ import { AdabasMap } from '../../src/adabas-map';
 
 describe('Adabas Integration Tests', () => {
 
-    const host = config.get('AdaTcp.host') as string;
-    const port = config.get('AdaTcp.port') as number;
-
+    const dbnr = config.get('Adabas.dbnr') as number;
     const fileNumber = config.get('Test.employeeFile') as number;
 
     let adabas: Adabas;
@@ -35,7 +33,7 @@ describe('Adabas Integration Tests', () => {
 
     beforeEach(() => {
         // instanciate a new Adabas object with database number from configuration
-        adabas = new Adabas(host, port);
+        adabas = new Adabas(dbnr);
 
         // instanciate a new AdabasMap object with file number for the employee file
         map = new AdabasMap(fileNumber);
@@ -43,12 +41,6 @@ describe('Adabas Integration Tests', () => {
 
     afterEach(async () => {
         await adabas.close();
-        adabas.disconnect();
-    });
-
-    test('expect connect is successful', async () => {
-        const uuid = await adabas.connect();
-        expect(uuid.length).toBeGreaterThan(0);
     });
 
     test('expect close is successful', async () => {

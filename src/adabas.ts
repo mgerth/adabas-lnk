@@ -66,7 +66,7 @@ export class Adabas {
             if (!callData.fnr) reject('File number is not provided');
 
             try {
-                this.fdt = await new FileDescriptionTable(this.dbid).getFDT(callData.fnr);
+                this.fdt = await new FileDescriptionTable(this.dbid, this.log).getFDT(callData.fnr);
                 if (JSON.stringify(this.fdt) == "[]") reject('File is not exist in the database');
                 resolve(this.fdt);
             }
@@ -690,7 +690,7 @@ export class Adabas {
     }
 
     private async getMap(callData: CallData): Promise<AdabasMap> {
-        const map = callData.map || await new FileDescriptionTable(this.dbid).getMap(callData.fnr);
+        const map = callData.map || await new FileDescriptionTable(this.dbid, this.log).getMap(callData.fnr);
         if (!map) throw new Error('Neither map or file number provided');
         if (callData.fields) {
             const filteredMap = new AdabasMap(map.fnr);

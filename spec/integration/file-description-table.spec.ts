@@ -23,15 +23,13 @@ import { AdabasMap } from './../../src/adabas-map';
 import { FileDescriptionTable } from './../../src/file-description-table';
 
 
-const host = config.get('AdaTcp.host') as string;
-const port = config.get('AdaTcp.port') as number;
-
+const dbnr = config.get('Adabas.dbnr') as number;
 const fnr = config.get('Test.employeeFile') as number;
 
 describe('FDT Tests', () => {
 
     test('expect read FDT successfully', async () => {
-        expect(await new FileDescriptionTable(host, port).getFDT(fnr)).toStrictEqual([{
+        expect(await new FileDescriptionTable(dbnr).getFDT(fnr)).toStrictEqual([{
             level: 1,
             name: 'AA',
             options: ['UQ', 'DE'],
@@ -129,7 +127,7 @@ describe('FDT Tests', () => {
     });
 
     test('expect get Map for a file is successful', async () => {
-        const map = await new FileDescriptionTable(host, port).getMap(fnr);
+        const map = await new FileDescriptionTable(dbnr).getMap(fnr);
 
         const AB = new AdabasMap()
             .alpha(20, 'AC', { name: 'AC' })

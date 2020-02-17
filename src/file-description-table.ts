@@ -27,18 +27,16 @@ export class FileDescriptionTable {
 
     private encoding: string | undefined;
     private dbid: number;
+    private log: string[] = [];
 
-    // private client: AdabasLnk;
-
-    constructor(dbid: number) {
+    constructor(dbid: number, log: string[] = []) {
         this.dbid = dbid;
-        // this.client = new AdabasLnk();
+        this.log = log;
     }
 
     getFDT(fnr: number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
-                // const uuid = await new AdabasConnect(this.client).connect();
                 const len = 0x10000;
                 const cb = new ControlBlock(this.dbid);
                 cb.init({
@@ -50,7 +48,7 @@ export class FileDescriptionTable {
                 });
                 const abda = new AdabasBufferStructure();
                 abda.newRb(Buffer.alloc(len));
-                const result = await new AdabasCall().call({ cb, abda });
+                const result = await new AdabasCall(this.log).call({ cb, abda });
                 const rb = result.abda.getBuffer('R');
                 const numberOfFields = rb.readUInt16LE(2);
                 const fdt = [];

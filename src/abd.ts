@@ -66,4 +66,8 @@ export class Abd {
     set recv(value: number) {
         new Int64LE(value).toBuffer().copy(this.abd, 32, 0, 8);
     }
+
+    set adr(value: number) {
+        new Int64LE(value).toBuffer().copy(this.abd, 40, 0, 8);
+    }
 }

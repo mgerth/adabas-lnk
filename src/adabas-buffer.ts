@@ -30,6 +30,7 @@ export class AdabasBuffer {
         this._abd.size = len;
         this._abd.send = len;
         this._abd.recv = len;
+        this._abd.adr = (buffer as any).address();
         this._buffer = buffer;
     }
 
