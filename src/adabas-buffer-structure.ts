@@ -80,7 +80,7 @@ export class AdabasBufferStructure {
         return buf;
     }
 
-    dump(text: string) {
+    dump(text: string): void {
         this.data.forEach((e) => {
             console.log(text + ': ' + e.abd.id + ' abd', hexdump(e.abd.buffer));
             console.log(text + ': ' + e.abd.id + ' buf', hexdump(e.buffer));

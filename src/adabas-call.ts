@@ -45,7 +45,7 @@ export class AdabasCall {
     call(payload: PayloadData): Promise<PayloadData> {
         return new Promise(async (resolve, reject) => {
             try {
-                let abda = payload.abda ? payload.abda.getAbdArray(): [];
+                const abda = payload.abda ? payload.abda.getAbdArray(): [];
                 if (this.log) {
                     if (this.log.includes('cb')) {
                         console.log(payload.cb.toString());
