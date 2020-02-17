@@ -1,6 +1,6 @@
 {
   "name": "adabas-lnk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "High level Adabas access package using an ADALNK connection",
   "keywords": [
     "adabas",
