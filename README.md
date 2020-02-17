@@ -17,15 +17,15 @@ npm install adabas-lnk
 
 ## Introduction
 
-This simple example shows how to read all records of file 11 and writes the result to the console:
+This simple example shows how to read all records of file 11 of database 12 and writes the result to the console:
 
 ```typescript
 const Adabas = require('adabas-lnk').Adabas;
 
-const adabas = new Adabas('localhost', 60001);
+const adabas = new Adabas(12);
 adabas.read({ fnr: 11 }).then( result => {
     console.log(result);
-    adabas.close().then(  () => adabas.disconnect() );
+    adabas.close();
 });
 ```
 
