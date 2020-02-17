@@ -47,6 +47,7 @@ export class FileDescriptionTable {
                     cop2: 'S'
                 });
                 const abda = new AdabasBufferStructure();
+                abda.newFb(Buffer.alloc(0));
                 abda.newRb(Buffer.alloc(len));
                 const result = await new AdabasCall(this.log).call({ cb, abda });
                 const rb = result.abda.getBuffer('R');
