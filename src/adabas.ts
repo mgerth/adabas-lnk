@@ -19,7 +19,7 @@
  */
 
 import { ControlBlock } from './control-block';
-import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue } from './interfaces';
+import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue, MapData } from './interfaces';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { AdabasMap } from './adabas-map';
@@ -694,10 +694,25 @@ export class Adabas {
         if (!map) throw new Error('Neither map nor file number provided');
         if (callData.fields) {
             const filteredMap = new AdabasMap(map.fnr);
+            const peArray: MapData[] = [];
             callData.fields.forEach((field) => {
                 const item = map.getField(field);
                 if (item) {
-                    filteredMap.add(item);
+                    if (item.type === 'periodic') {
+                        const pe = peArray.find( element => {
+                            return element.shortName === item.shortName;
+                        });
+                        if (pe === undefined) {
+                            filteredMap.add(item);
+                            peArray.push(item);
+                        } 
+                        else {
+                            pe.map.add(item.map.getField(field));
+                        }
+                    }
+                    else {
+                        filteredMap.add(item);
+                    }
                 }
             });
             return filteredMap;
