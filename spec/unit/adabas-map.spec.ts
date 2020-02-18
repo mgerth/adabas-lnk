@@ -120,7 +120,7 @@ describe('Adabas Map Test Suite', () => {
             .group(income, 'AQ', { occ: 5 })
             ;
 
-        expect(empl.getFb()).toBe('AA,8,A,AC,20,A,AE,20,A,AD,20,A,AQC,1,B,AR1-5,3,A,AS1-5,9,A,AT1-5C,1,B,AT1-5(1-5),9,A.');
+        expect(empl.getFb()).toBe('AA,8,A,AC,20,A,AE,20,A,AD,20,A,AQC,1,B,AR1-5,3,A,AS1-5,9,A,AT1C,1,B,AT2C,1,B,AT3C,1,B,AT4C,1,B,AT5C,1,B,AT1-5(1-5),9,A.');
         expect(empl.getRbLen()).toBe(359);
     });
 
@@ -152,7 +152,7 @@ describe('Adabas Map Test Suite', () => {
             .group(periodic, 'PE', { occ: 5 })
             ;
 
-        expect(types.getFb()).toBe('AL,8,A,BI,20,B,FI,4,F,FL,8,G,PA,4,P,UN,4,U,GA,3,A,GP,9,P,GUC,1,B,GU1-5,9,U,PEC,1,B,P11-5,3,A,PP1-5,9,P,PU1-5C,1,B,PU1-5(1-5),9,U.');
+        expect(types.getFb()).toBe('AL,8,A,BI,20,B,FI,4,F,FL,8,G,PA,4,P,UN,4,U,GA,3,A,GP,9,P,GUC,1,B,GU1-5,9,U,PEC,1,B,P11-5,3,A,PP1-5,9,P,PU1C,1,B,PU2C,1,B,PU3C,1,B,PU4C,1,B,PU5C,1,B,PU1-5(1-5),9,U.');
         expect(types.getRbLen()).toBe(397);
     });
 
