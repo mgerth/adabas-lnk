@@ -515,7 +515,7 @@ export class Adabas {
         throw new Error('Call type not supported');
     }
 
-    private async modify(obj: any, isn?: number|string): Promise<any> {
+    private async modify(obj: any, isn?: number | string): Promise<any> {
         this.map.validate(obj);
         this.open(this.map.fnr);
         // create new map containing only fields from the request
@@ -691,7 +691,7 @@ export class Adabas {
 
     private async getMap(callData: CallData): Promise<AdabasMap> {
         const map = callData.map || await new FileDescriptionTable(this.dbid, this.log).getMap(callData.fnr);
-        if (!map) throw new Error('Neither map or file number provided');
+        if (!map) throw new Error('Neither map nor file number provided');
         if (callData.fields) {
             const filteredMap = new AdabasMap(map.fnr);
             callData.fields.forEach((field) => {

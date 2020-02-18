@@ -52,7 +52,7 @@ export class AdabasCall {
                         console.log(payload.cb.toString());
                         console.log(hexdump(payload.cb.getBuffer(), 'Before Control Block'));
                     }
-                    if (this.log.includes('before')) {
+                    if (this.log.includes('before') && payload.abda) {
                         payload.abda.dump('Before Buffer');
                     }
                 }
@@ -62,7 +62,7 @@ export class AdabasCall {
                         console.log(payload.cb.toString());
                         console.log(hexdump(payload.cb.getBuffer(), 'After Control Block'));
                       }
-                    if (this.log.includes('after')) {
+                    if (this.log.includes('after') && payload.abda) {
                         payload.abda.dump('After Buffer');
                     }
                 }
