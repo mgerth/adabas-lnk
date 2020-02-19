@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright © 2019-2020 Software AG, Darmstadt, Germany and/or its licensors
  *
@@ -42,6 +43,7 @@ export class AdabasMap {
 
     private _fnr: number;
     private _list: MapData[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private schema: any;
 
     constructor(fnr = 0) {
@@ -74,13 +76,34 @@ export class AdabasMap {
                 return f;
             }
             if (f.type === TYPE_GROUP) {
-              if (f.map) {
-                const field = f.map.getField(name);
-                if (field != null) {
-                    return field;
+                if (f.map) {
+                    const field = f.map.getField(name);
+                    if (field != null) {
+                        return field;
+                    }
                 }
-              }
             }
+            if (f.type === TYPE_PERIODIC) {
+                if (f.map) {
+                    const field = f.map.getField(name);
+                    if (field != null) {
+                        const pe = {
+                            type: f.type,
+                            shortName: f.shortName,
+                            longName: f.longName,
+                            format: f.format,
+                            length: f.length,
+                            occ: f.occ,
+                            map: new AdabasMap(),
+                            options: f.options,
+                            offset: f.offset
+                        };
+                        pe.map.add(field);
+                        return pe;
+                    }
+                }
+            }
+
         }
         return null;
     }
@@ -187,7 +210,16 @@ export class AdabasMap {
                     fb += item.shortName + occString + ',' + item.length + ',' + item.format;
                     break;
                 case TYPE_MULTIPLE:
-                    if (counter) fb += item.shortName + occString + 'C,1,B,'
+                    if (counter) {
+                        if (occ > 0) {
+                            for (let index = 1; index < occ + 1; index++) {
+                                fb += item.shortName + index + 'C,1,B,';
+                            }
+                        }
+                        else {
+                            fb += item.shortName + 'C,1,B,';
+                        }
+                    }
                     fb += item.shortName + occString;
                     if (occ > 0) {
                         fb += '(';

@@ -28,8 +28,9 @@ export class ControlBlock {
     private encoding: string | undefined;
     private buffer: Buffer;
 
-    constructor() {
+    constructor(dbid: number) {
         this.buffer = Buffer.alloc(ControlBlock.LEN);
+        this.dbid = dbid;
         this.init();
     }
 
@@ -206,6 +207,10 @@ export class ControlBlock {
         return this.buffer.toString(this.encoding, 112, 114);
     }
 
+    // get errc(): number {
+    //     return this.buffer.readUInt32LE(114);
+
+    // }
     get errc(): string {
         return this.buffer.toString(this.encoding, 114, 116);
     }
@@ -253,11 +258,11 @@ export class ControlBlock {
         this.buffer.write(value, 152, 16);
     }
 
-    get acbx() {
+    get acbx(): Buffer  {
         return this.buffer;
     }
 
-    init(value = {}) {
+    init(value = {}): void {
         this.buffer.writeInt8(0x00, 0);             // acbxtyp       1 byte     +00
         this.buffer.writeInt8(0x00, 1);             // acbxrsv1      1 byte     +01
         this.buffer.write('F2', 2, 2);              // acbxver       1 byte     +02
@@ -266,7 +271,7 @@ export class ControlBlock {
                                                     // acbxrsv2      2 byte     +08     must be 0x00
         this.rsp = 0;                               // acbxrsp       2 byte     +0A
         this.cid = '    ';                          // acbxcid       4 byte     +0C
-        this.dbid = 0;                              // acbxdbid      4 byte     +10
+        this.dbid = this.dbid;                      // acbxdbid      4 byte     +10
         this.fnr = 0;                               // acbxfnr       4 byte     +14
         this.isn = 0;                               // acbxisn       8 byte     +18
         this.isl = 0;                               // acbxisl       8 byte     +20
@@ -306,7 +311,7 @@ export class ControlBlock {
         }
     }
 
-    getFields(): any {
+    getFields(): ControlBlock {
         return this;
     }
 
@@ -314,11 +319,11 @@ export class ControlBlock {
         return this.buffer;
     }
 
-    setBuffer(buffer: Buffer) {
+    setBuffer(buffer: Buffer): void {
         this.buffer = buffer;
     }
 
-    toString(text: string = ''): string {
+    toString(text = ''): string {
         const data = text + ' Control Block: [' +
               'len: ' + this.len +
             ', cmd: ' + this.cmd +
@@ -361,8 +366,10 @@ export class ControlBlock {
         return data;
     }
 
-    setValue(value: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue(value: any): void {
         Object.keys(value).forEach((key) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this as any)[key] = value[key];
         });
     }

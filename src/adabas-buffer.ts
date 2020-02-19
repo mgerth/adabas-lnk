@@ -30,6 +30,8 @@ export class AdabasBuffer {
         this._abd.size = len;
         this._abd.send = len;
         this._abd.recv = len;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this._abd.adr = (buffer as any).address();
         this._buffer = buffer;
     }
 

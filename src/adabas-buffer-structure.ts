@@ -72,9 +72,18 @@ export class AdabasBufferStructure {
         return null;
     }
 
-    dump() {
-        this.data.forEach( (e) => {
-            console.log(e.abd.id, hexdump(e.buffer));
+    getAbdArray(): Buffer[] {
+        const buf: Buffer[] = [];
+        this.data.forEach( abd => {
+            buf.push(Buffer.concat([abd.abd.buffer, abd.buffer ]));
+        })
+        return buf;
+    }
+
+    dump(text: string): void {
+        this.data.forEach((e) => {
+            console.log(text + ': ' + e.abd.id + ' abd', hexdump(e.abd.buffer));
+            console.log(text + ': ' + e.abd.id + ' buf', hexdump(e.buffer));
         })
     }
 }

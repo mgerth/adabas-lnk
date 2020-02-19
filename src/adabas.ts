@@ -19,7 +19,7 @@
  */
 
 import { ControlBlock } from './control-block';
-import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue } from './interfaces';
+import { CallType, CallData, PayloadData, AdabasOptions, CommandQueue, MapData } from './interfaces';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { AdabasMap } from './adabas-map';
@@ -30,12 +30,9 @@ import { FileDescriptionTable } from './file-description-table';
 enum Status { Close, Open };
 
 export class Adabas {
-    private host: string;
-    private port: number;
-    private uuid: Buffer;
+    private dbid: number;
     private adabas: AdabasCall;
     private multifetch = 10;
-    private connected: boolean;
     private cb: ControlBlock;
     private map: AdabasMap;
     private type: CallType = CallType.Undefined;
@@ -48,16 +45,11 @@ export class Adabas {
     private lastISN = 0;
     private pageDone = false;
 
-    constructor(host: string, port: number, options?: AdabasOptions) {
+    constructor(dbid: number, options?: AdabasOptions) {
+        this.dbid = dbid;
         if (options) this.setOptions(options);
 
-        this.host = host;
-        this.port = port;
-
-        this.connected = false;
-
-        this.cb = new ControlBlock();
-        // this.client = new AdabasLnk();
+        this.cb = new ControlBlock(dbid);
 
         this.adabas = new AdabasCall(this.log);
 
@@ -69,18 +61,12 @@ export class Adabas {
         this.log = options.log || null;
     }
 
-
-    async connect(): Promise<Buffer> {
-        this.connected = true;
-        return this.uuid;
-    }
-
     public readFDT(callData: CallData = {}): Promise<object> {
         return new Promise(async (resolve, reject) => {
             if (!callData.fnr) reject('File number is not provided');
 
             try {
-                this.fdt = await new FileDescriptionTable(this.host, this.port).getFDT(callData.fnr);
+                this.fdt = await new FileDescriptionTable(this.dbid, this.log).getFDT(callData.fnr);
                 if (JSON.stringify(this.fdt) == "[]") reject('File is not exist in the database');
                 resolve(this.fdt);
             }
@@ -302,17 +288,13 @@ export class Adabas {
         this.nextCommand();
     }
 
-    public disconnect(): void {
-        this.connected = false;
-    }
-
     private open(fnr: number, mode = 'UPD'): Promise<any> {
         return new Promise(async (resolve, reject) => {
             if (this.status === Status.Open) {
                 resolve();
             }
             else {
-                const cb = new ControlBlock();
+                const cb = new ControlBlock(this.dbid);
                 cb.init({
                     cmd: 'OP'
                 });
@@ -363,7 +345,6 @@ export class Adabas {
     }
 
     private async callAdabas(abda: AdabasBufferStructure = null, cb: ControlBlock = this.cb): Promise<PayloadData> {
-        if (!this.connected) await this.connect();
         const result = await this.adabas.call({ cb, 'abda': abda });
         this.cb = result.cb;
         return result;
@@ -534,7 +515,7 @@ export class Adabas {
         throw new Error('Call type not supported');
     }
 
-    private async modify(obj: any, isn?: number): Promise<any> {
+    private async modify(obj: any, isn?: number | string): Promise<any> {
         this.map.validate(obj);
         this.open(this.map.fnr);
         // create new map containing only fields from the request
@@ -590,7 +571,7 @@ export class Adabas {
             const fb = Buffer.from(updateMap.getFb(false));
             if (isn && isn > 0) {
                 this.cb.cmd = 'N2';
-                this.cb.isn = isn;
+                this.cb.isn = isn as number;
             } else {
                 this.cb.cmd = 'N1';
             }
@@ -709,14 +690,29 @@ export class Adabas {
     }
 
     private async getMap(callData: CallData): Promise<AdabasMap> {
-        const map = callData.map || await new FileDescriptionTable(this.host, this.port).getMap(callData.fnr);
-        if (!map) throw new Error('Neither map or file number provided');
+        const map = callData.map || await new FileDescriptionTable(this.dbid, this.log).getMap(callData.fnr);
+        if (!map) throw new Error('Neither map nor file number provided');
         if (callData.fields) {
             const filteredMap = new AdabasMap(map.fnr);
+            const peArray: MapData[] = [];
             callData.fields.forEach((field) => {
                 const item = map.getField(field);
                 if (item) {
-                    filteredMap.add(item);
+                    if (item.type === 'periodic') {
+                        const pe = peArray.find( element => {
+                            return element.shortName === item.shortName;
+                        });
+                        if (pe === undefined) {
+                            filteredMap.add(item);
+                            peArray.push(item);
+                        } 
+                        else {
+                            pe.map.add(item.map.getField(field));
+                        }
+                    }
+                    else {
+                        filteredMap.add(item);
+                    }
                 }
             });
             return filteredMap;

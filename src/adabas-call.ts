@@ -23,42 +23,49 @@ import * as ref from 'ref';
 import * as ArrayType from 'ref-array';
 
 import { PayloadData } from './interfaces';
+import { hexdump } from './common';
 export class AdabasCall {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     adalnkx: any;
-    // private log: string[];
-    // adalnk: any;
+    private log: string[];
 
     constructor(log: string[] = []) {
-        // this.adalnk = adalnk;
-        console.log(log);
-        // this.log = log;
+        this.log = log;
+
         const libName = (os.platform() == 'win32') ? 'adalnkx' : 'libadalnkx.so';
-    
-        const abd = ref.types.void; 
+        const abd = ref.types.void;
         const abdPtr = ref.refType(abd);
         const abdArray = ArrayType(abdPtr);
-
         // binding to a few "adalnkx" functions...
         this.adalnkx = ffi.Library(libName, {
             'adabasx': ['int', ['pointer', 'int', abdArray]]
         });
-
     }
 
     call(payload: PayloadData): Promise<PayloadData> {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log('cb: ', payload.cb.toString('before'));
-                payload.abda.dump();
-                console.log('adba:', payload.abda.get());
-                const abd: Buffer[] = [];
-                payload.abda.get().forEach( buf => {
-                    abd.push(buf.buffer);
-                })
-                this.adalnkx.adabasx(payload.cb.acbx, payload.abda.len(), abd);
-                console.log('cb: ', payload.cb.toString('after'));
-                payload.abda.dump();
+                const abda = payload.abda ? payload.abda.getAbdArray(): [];
+                if (this.log) {
+                    if (this.log.includes('cb')) {
+                        console.log(payload.cb.toString());
+                        console.log(hexdump(payload.cb.getBuffer(), 'Before Control Block'));
+                    }
+                    if (this.log.includes('before') && payload.abda) {
+                        payload.abda.dump('Before Buffer');
+                    }
+                }
+                this.adalnkx.adabasx(payload.cb.acbx, abda.length, abda);
+                if (this.log) {
+                    if (this.log.includes('cb')) {
+                        console.log(payload.cb.toString());
+                        console.log(hexdump(payload.cb.getBuffer(), 'After Control Block'));
+                      }
+                    if (this.log.includes('after') && payload.abda) {
+                        payload.abda.dump('After Buffer');
+                    }
+                }
                 resolve(payload);
             } catch (error) {
                 reject(error);

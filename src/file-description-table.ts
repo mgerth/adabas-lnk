@@ -22,24 +22,24 @@ import { AdabasMap } from './adabas-map';
 import { AdabasBufferStructure } from './adabas-buffer-structure';
 import { AdabasCall } from './adabas-call';
 import { ControlBlock } from './control-block';
+import { FdtField } from './interfaces';
 
 export class FileDescriptionTable {
 
     private encoding: string | undefined;
+    private dbid: number;
+    private log: string[] = [];
 
-    // private client: AdabasLnk;
-
-    constructor(host: string, port: number) {
-        console.log(host, port);
-        // this.client = new AdabasLnk();
+    constructor(dbid: number, log: string[] = []) {
+        this.dbid = dbid;
+        this.log = log;
     }
 
     getFDT(fnr: number): Promise<object> {
         return new Promise(async (resolve, reject) => {
             try {
-                // const uuid = await new AdabasConnect(this.client).connect();
                 const len = 0x10000;
-                const cb = new ControlBlock();
+                const cb = new ControlBlock(this.dbid);
                 cb.init({
                     fnr,
                     typ: 0x30,
@@ -48,8 +48,9 @@ export class FileDescriptionTable {
                     cop2: 'S'
                 });
                 const abda = new AdabasBufferStructure();
+                abda.newFb(Buffer.alloc(0));
                 abda.newRb(Buffer.alloc(len));
-                const result = await new AdabasCall().call({ cb, abda });
+                const result = await new AdabasCall(this.log).call({ cb, abda });
                 const rb = result.abda.getBuffer('R');
                 const numberOfFields = rb.readUInt16LE(2);
                 const fdt = [];
@@ -63,11 +64,9 @@ export class FileDescriptionTable {
                     const format = rb.toString(this.encoding, offset + 6, offset + 7);
                     const option2 = rb.readUInt8(offset + 7);
                     if (indicator === 'F') {
-                        const field: any = {};
+                        const field: FdtField = { level, name };
                         let pe = false;
                         let gr = false;
-                        field.level = level;
-                        field.name = name;
                         const o = [];
                         if (option & 8 && field.level == 1) {
                             pe = true;
@@ -131,7 +130,9 @@ export class FileDescriptionTable {
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private objectToMap(object: any): AdabasMap {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const FIELD_FORMAT_TABLE: any = {
             'A': 'alpha',
             'B': 'binary',
@@ -144,6 +145,7 @@ export class FileDescriptionTable {
             'I': 'fixed'
         };
         const map = new AdabasMap();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let m: any = map;
         for (let index = 0; index < object.length; index++) {
             const element = object[index];

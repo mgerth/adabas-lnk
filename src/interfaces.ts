@@ -27,8 +27,8 @@ export enum CallType { Create, Delete, Read, Update, Close, ET, BT, Undefined };
 export interface CallData {
     map?: AdabasMap;
     fnr?: number;
-    isn?: any;
-    object?: any;
+    isn?: number|string;
+    object?: {};
     criteria?: string;
     fields?: string[];
     sortedBy?: string;
@@ -64,6 +64,11 @@ export interface MapOption {
     prec?: number;
 }
 
+export interface Multifetch {
+    num: number;
+    mbe: MultifetchElement[];
+}
+
 export interface MultifetchElement {
     len: number;
     error: number;
@@ -81,6 +86,20 @@ export interface CommandQueue {
     data: CallData;
     resolve: Function;
     reject: Function;
+}
+
+export interface FdtField {
+    level: number;
+    name: string;
+    type?: string;
+    options?: string[];
+    format?: string;
+    length?: number;
+}
+
+export interface Message {
+    message: string;
+    explanation: string;
 }
 
 
